@@ -1,64 +1,96 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Purpose
 
-## About Laravel
+This repository is a minimal example repository to show an issue during the installation of `joy/voyager-export` on recent version of Laravel.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Environment
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+```shell
+$ composer --version
+Composer version 2.3.3 2022-04-01 22:15:35
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+$ php --version 
+PHP 8.1.4 (cli) (built: Apr  4 2022 13:30:00) (NTS)
+Copyright (c) The PHP Group
+Zend Engine v4.1.4, Copyright (c) Zend Technologies
+    with Zend OPcache v8.1.4, Copyright (c), by Zend Technologies
 
-## Learning Laravel
+$ php artisan --version
+Laravel Framework 9.7.0
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Issue
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+On a simple project, when I try to install `joy/voyager-export`, I get the following errors:
+```shell
+$ composer require joy/voyager-export
+Using version ^1.2 for joy/voyager-export
+./composer.json has been updated
+Running composer update joy/voyager-export
+Loading composer repositories with package information
+Updating dependencies
+Your requirements could not be resolved to an installable set of packages.
 
-## Laravel Sponsors
+  Problem 1
+    - Root composer.json requires joy/voyager-export ^1.2 -> satisfiable by joy/voyager-export[v1.2.1, ..., v1.2.17].
+    - joy/voyager-export[v1.2.1, ..., v1.2.17] require illuminate/support ^7|^8 -> found illuminate/support[v7.0.0, ..., 7.x-dev, v8.0.0, ..., 8.x-dev] but these were not loaded, likely because it conflicts with another require.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+You can also try re-running composer require with an explicit version constraint, e.g. "composer require joy/voyager-export:*" to figure out if any version is installable, or "composer require joy/voyager-export:^2.1" if you know which you need.
 
-### Premium Partners
+Installation failed, reverting ./composer.json and ./composer.lock to their original content.
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+## How this project was built
 
-## Contributing
+This project was built with the following commands:
+```shell
+# Step 0: create a fresh new Laravel project
+$ composer create-project laravel/laravel joy-voyager-export-issue
+$ cd joy-voyager-export-issue/
+$ composer install
+$ git init
+$ git add .
+$ git commit -m "first commit"
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Step 1: create a simple model Article
+$ php artisan make:model Article -m
+# TODO manually: Adjust migration and model file
+# TODO manually: Create the correct database manually
+# TODO manually: Adjust the .env file
+$ git add app/Models/Article.php database/migrations/*_create_articles_table.php
+$ git commit -m "Create article model."
 
-## Code of Conduct
+# Step 2: install tcg/voyager
+$ composer require tcg/voyager
+$ php artisan voyager:install
+$ git add .
+$ git commit -m "Install tcg/voyager"
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Step 3: setup an admin account for tcg/voyager
+$ php artisan voyager:admin your@email.com --create
 
-## Security Vulnerabilities
+$ php artisan serve
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# TODO manually: check if tcg-voyager is available at http://127.0.0.1:8000/admin/login
+# TODO manually: kill the web server
 
-## License
+# Step 4: Try to install joy/voyager-export
+$ composer require joy/voyager-export
+Using version ^1.2 for joy/voyager-export
+./composer.json has been updated
+Running composer update joy/voyager-export
+Loading composer repositories with package information
+Updating dependencies
+Your requirements could not be resolved to an installable set of packages.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+  Problem 1
+    - Root composer.json requires joy/voyager-export ^1.2 -> satisfiable by joy/voyager-export[v1.2.1, ..., v1.2.17].
+    - joy/voyager-export[v1.2.1, ..., v1.2.17] require illuminate/support ^7|^8 -> found illuminate/support[v7.0.0, ..., 7.x-dev, v8.0.0, ..., 8.x-dev] but these were not loaded, likely because it conflicts with another require.
+
+You can also try re-running composer require with an explicit version constraint, e.g. "composer require joy/voyager-export:*" to figure out if any version is installable, or "composer require joy/voyager-export:^2.1" if you know which you need.
+
+Installation failed, reverting ./composer.json and ./composer.lock to their original content.
+```
+
+This procedure is inspired by [this tutorial](https://www.gekkode.com/developpement/laravel/tutoriel-laravel-8-pour-les-debutants/).
