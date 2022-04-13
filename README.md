@@ -24,7 +24,7 @@ Laravel Framework 9.7.0
 
 On a simple project, when I try to install `joy/voyager-export`, I get the following errors:
 ```shell
-$ composer require joy/voyager-export
+$ composer require joy/voyager-export -W
 Using version ^1.2 for joy/voyager-export
 ./composer.json has been updated
 Running composer update joy/voyager-export
